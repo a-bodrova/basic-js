@@ -18,41 +18,33 @@ function transform(/* arr */) {
   if (!Array.isArray(arr)) {
     throw new Error("\'arr\' parameter must be an instance of the Array!");
   }
+  const array = [...arr];
+  const res = [];
 
-  let result = [];
+  const controls = ['--discard-prev', '--discard-next', '--double-prev', '--double-next'];
 
-  for (let i = 0; i < arr.length; i++) {
-    if (arr[i] === '--discard-next') {
-      if (typeof arr[i + 1] === 'string') {
-        i += 2;
-        break;
-      }
-      i += 1;
-      break;
+  for (let i = 0; i < array.length - 1; i++) {
+
+    res.push(array[i]);
+
+    if (array[i + 1] === '--discard-prev' && i > 0 && !controls.includes(array[i - 1])) {
+      res.pop();
+    } else if (array[i - 1] === '--discard-next' && !controls.includes(array[i + 1])) {
+      res.pop();
+
+    } else if (array[i - 1] === '--double-next' && !controls.includes(array[i + 1])) {
+      res.push(array[i]);
+
+    } else if (array[i + 1] === '--double-prev' && i > 0 && !controls.includes(array[i - 1])) {
+      res.push(array[i]);
+
     }
 
-    if (arr[i] === '--discard-prev' && result.length > 0) {
-      result.pop();
-      i++;
-      break;
+    if (controls.includes(array[i])) {
+      res.pop();
     }
-
-    if (arr[i] === '--double-next') {
-      result.push(arr[i + 1]);
-      i++;
-      break;
-    }
-
-    if (arr[i] === '--double-prev') {
-      result.push(arr[i - 1]);
-      i++;
-      break;
-    }
-
-    result.push(arr[i]);
   }
-
-  return result;
+  return res;
 }
 
 module.exports = {

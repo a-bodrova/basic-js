@@ -5,47 +5,33 @@ const { NotImplementedError } = require('../extensions/index.js');
  * 
  */
 const chainMaker = {
-  chain: '',
+  chain: [],
   getLength() {
-    throw new NotImplementedError('Not implemented');
-    return this.chain.split('~~').length;
+    return this.chain.length;
   },
   addLink( val ) {
-    throw new NotImplementedError('Not implemented');
     const value = `${val}`;
-    if (this.chain.length > 0) {
-      this.chain += `~~( ${value} )`;
-    } else {
-      this.chain += `( ${value} )`;
-    }
-    if (arguments.length === 0) {
-      if (this.chain.length > 0) {
-        this.chain += `~~( )`;
-      } else {
-        this.chain += `( )`;
-      }
-    }
+    this.chain.push(value);
 
     return this;
   },
   removeLink( position ) {
-    throw new NotImplementedError('Not implemented');
-    if (position < 0 || position >= this.chain.split('~~').length || typeof position !== 'number' || position.toString().includes('.')) {
-      this.chain = '';
+    if (position - 1 < 0 || position - 1 >= this.chain.length || typeof position !== 'number' || position.toString().includes('.')) {
+      this.chain = [];
       throw new Error("You can't remove incorrect link!");
     }
-    this.chain = this.chain.split('~~').slice().splice(position, 1).join('~~');
+    this.chain.splice(position - 1, 1);
+
     return this;
   },
   reverseChain() {
-    throw new NotImplementedError('Not implemented');
-    this.chain = this.chain.split('~~').reverse().join('~~');
+    this.chain = this.chain.reverse();
+
     return this;
   },
   finishChain() {
-    throw new NotImplementedError('Not implemented');
-    const finish = this.chain;
-    this.chain = '';
+    const finish = `( ${this.chain.join(' )~~( ')} )`;
+    this.chain = [];
     return finish;
   }
 };
